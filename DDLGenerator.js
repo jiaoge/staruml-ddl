@@ -220,7 +220,9 @@ define(function (require, exports, module) {
             if (col.unique) {
                 uniques.push(self.getId(col.name, options));
             }
-            lines.push(self.getColumnString(col, options));
+            var documentation = col.documentation || "";
+
+            lines.push(self.getColumnString(col, options)+" COMMENT '"+documentation+"'");
         });
 
         // Primary Keys
@@ -241,6 +243,32 @@ define(function (require, exports, module) {
         codeWriter.outdent();
         codeWriter.writeLine(");");
         codeWriter.writeLine();
+    };
+
+    DDLGenerator.prototype.writeComments = function (codeWriter, elem, options) {
+        var self = this;
+        
+        if (options.dbms === "mysql") {
+            // Columns
+            // elem.columns.forEach(function (col) {
+            //     var documentation = col.documentation;
+            //     if(!!documentation) {
+            //         documentation = "" + documentation;
+            //         codeWriter.writeLine("COMMENT ON COLUMN " + elem.name + "." + col.name + " IS '" + self.replaceAll(documentation, "'", "''") + "';");
+            //     }
+            // });
+
+        } else if (options.dbms === "oracle") {
+            
+            // Columns
+            elem.columns.forEach(function (col) {
+                var documentation = col.documentation;
+                if(!!documentation) {
+                    documentation = "" + documentation;
+                    codeWriter.writeLine("COMMENT ON COLUMN " + elem.name + "." + col.name + " IS '" + self.replaceAll(documentation, "'", "''") + "';");
+                }
+            });
+        }
     };
 
     /**
@@ -289,6 +317,15 @@ define(function (require, exports, module) {
                     self.writeForeignKeys(codeWriter, e, options);
                 }
             });
+
+            // Comments
+             // elem.ownedElements.forEach(function (e) {
+             //     if (e instanceof type.ERDEntity) {
+             //         self.writeComments(codeWriter, e, options);
+             //     }
+             // });
+
+
             file = FileSystem.getFileForPath(path);
             FileUtils.writeText(file, codeWriter.getData(), true).then(result.resolve, result.reject);
 

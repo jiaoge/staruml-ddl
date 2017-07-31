@@ -46,9 +46,9 @@ define(function (require, exports, module) {
     /**
      * Commands IDs
      */
-    var CMD_DDL           = 'ddl',
-        CMD_DDL_GENERATE  = 'ddl.generate',
-        CMD_DDL_CONFIGURE = 'ddl.configure';
+    var CMD_DDL           = 'ddl2',
+        CMD_DDL_GENERATE  = 'ddl2.generate',
+        CMD_DDL_CONFIGURE = 'ddl2.configure';
 
     /**
      * Command Handler for DDL Generation
